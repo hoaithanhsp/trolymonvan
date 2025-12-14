@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TRỢ LÝ MÔN VĂN PRO - Sinh Đề Tự Động</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#2563eb', // blue-600
+              secondary: '#475569', // slate-600
+            },
+            fontFamily: {
+              serif: ['Times New Roman', 'serif'],
+              sans: ['ui-sans-serif', 'system-ui', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Exam Layout Styles */
+      .exam-section-title {
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+      }
+      
+      .exam-question {
+        margin-bottom: 1rem;
+        page-break-inside: avoid;
+      }
+      
+      .exam-question-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.25rem;
+      }
+      
+      .question-label {
+        font-weight: 700;
+        margin-right: 0.5rem;
+        white-space: nowrap;
+      }
+      
+      .question-points {
+        font-weight: 700;
+        white-space: nowrap;
+        margin-left: 1rem;
+      }
+      
+      .question-content {
+        text-align: justify;
+        line-height: 1.6;
+      }
+
+      .sub-question {
+        margin-left: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      /* Rubric Table Styles */
+      .answer-key-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        font-size: 0.95rem;
+      }
+
+      .answer-key-table th,
+      .answer-key-table td {
+        border: 1px solid #333; /* Darker border for print clarity */
+        padding: 8px 12px;
+        vertical-align: top;
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: 1.5;
+      }
+
+      .answer-key-table th {
+        background-color: #f3f4f6;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      /* Custom print styles */
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        .print-only {
+          display: block !important;
+        }
+        body {
+          background: white;
+          color: black;
+        }
+        .exam-paper {
+          box-shadow: none !important;
+          border: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          width: 100% !important;
+        }
+        /* Ensure table borders print */
+        .answer-key-table th,
+        .answer-key-table td {
+          border: 1px solid black !important;
+        }
+      }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-slate-900 antialiased">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
