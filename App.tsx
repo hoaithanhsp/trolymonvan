@@ -528,5 +528,6 @@ const App: React.FC = () => {
       )}
     </div>
   );
-};e x p o r t   d e f a u l t   A p p ;  
- 
+};
+
+export default App;
