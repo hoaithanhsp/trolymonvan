@@ -116,7 +116,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
           </div>
         </div>
         <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN PRO</h1>
-        <p className="text-slate-600">Phát triển bởi Trần Hoài Thanh</p>
+        <p className="text-slate-600 mb-4">Phát triển bởi Trần Hoài Thanh</p>
+        <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-5 py-2 shadow-sm">
+          <span className="text-blue-800 font-bold text-sm">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</span>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
@@ -128,8 +131,8 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
               type="button"
               onClick={() => !isGenerating && setLevel(lvl)}
               className={`flex-1 py-4 text-sm font-bold uppercase tracking-wide transition-colors ${level === lvl
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-gray-50'
+                ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
+                : 'text-slate-500 hover:text-slate-700 hover:bg-gray-50'
                 } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {lvl}
@@ -294,8 +297,8 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
               type="submit"
               disabled={isGenerating}
               className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all transform hover:-translate-y-1 ${isGenerating
-                  ? 'bg-slate-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30'
+                ? 'bg-slate-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30'
                 }`}
             >
               {isGenerating ? (
