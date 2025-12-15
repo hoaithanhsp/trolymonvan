@@ -116,11 +116,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
           </div>
         </div>
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN <span className="text-blue-600">PRO</span></h1>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN PRO<span className="text-blue-600">PRO</span></h1>
         <p className="text-slate-600 font-medium">Phát triển bởi Trần Hoài Thanh</p>
         <p className="text-slate-500 text-sm mt-1">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
       </div>
-
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
         {/* Level Selection Tabs */}
         <div className="flex border-b border-gray-200">
