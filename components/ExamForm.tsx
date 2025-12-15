@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, FileText, Sparkles, BookOpen, Clock, GraduationCap, FileUp, Flame, School } from 'lucide-react';
+import { Upload, FileText, Sparkles, BookOpen, Clock, GraduationCap, FileUp, Flame, School, Paperclip } from 'lucide-react';
 import { ExamConfig } from '../types';
 
 interface ExamFormProps {
@@ -40,12 +40,15 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
   
   const [matrixContent, setMatrixContent] = useState('');
   const [specificationContent, setSpecificationContent] = useState('');
+  const [uploadedTopicContent, setUploadedTopicContent] = useState(''); // Content from uploaded topic file
   
   const [specFileName, setSpecFileName] = useState<string | null>(null);
   const [matrixFileName, setMatrixFileName] = useState<string | null>(null);
+  const [topicFileName, setTopicFileName] = useState<string | null>(null);
 
   const specFileInputRef = useRef<HTMLInputElement>(null);
   const matrixFileInputRef = useRef<HTMLInputElement>(null);
+  const topicFileInputRef = useRef<HTMLInputElement>(null);
 
   // Update options when level changes
   useEffect(() => {
@@ -57,14 +60,22 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ level, gradeLevel, examType, topic, trendingTopic, matrixContent, specificationContent });
+    onSubmit({ 
+      level, 
+      gradeLevel, 
+      examType, 
+      topic, 
+      trendingTopic, 
+      matrixContent, 
+      specificationContent,
+      uploadedTopicContent // Pass the uploaded content
+    });
   };
 
   const handleSpecFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSpecFileName(file.name);
-      // Simulate file read for demo
       setSpecificationContent(prev => prev || `[Đã đính kèm file đặc tả: ${file.name}]. Hệ thống sẽ ưu tiên sử dụng nội dung bạn dán vào ô văn bản để đảm bảo chính xác.`);
     }
   };
@@ -77,6 +88,25 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
     }
   };
 
+  const handleTopicFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setTopicFileName(file.name);
+      // Logic giả lập đọc file để đưa vào ngữ cảnh AI
+      // Trong thực tế cần server-side parsing hoặc thư viện js pdf
+      if (file.type === "application/pdf") {
+         setUploadedTopicContent(`[NGỮ LIỆU ĐƯỢC CUNG CẤP TỪ FILE PDF: ${file.name}]. Hãy coi đây là văn bản chính để ra đề.`);
+      } else {
+         const reader = new FileReader();
+         reader.onload = (e) => {
+            const text = e.target?.result as string;
+            setUploadedTopicContent(`[NGỮ LIỆU TỪ FILE USER UPLOAD]:\n${text}`);
+         };
+         reader.readAsText(file);
+      }
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6">
       <div className="text-center mb-8">
@@ -85,9 +115,8 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             <Sparkles className="w-8 h-8 text-blue-600" />
           </div>
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN <span className="text-blue-600">PRO</span></h1>
-        <p className="text-slate-600 font-medium">Phát triển bởi Trần Hoài Thanh</p>
-        <p className="text-slate-500 text-sm mt-1">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">Trợ Lý Soạn Đề Ngữ Văn AI <span className="text-blue-600">Ver 3.0</span></h1>
+        <p className="text-slate-600">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
@@ -152,17 +181,46 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             </div>
           </div>
           
-          <div className="w-full">
-            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-              <BookOpen className="w-4 h-4" /> Ghi chú thêm (Tùy chọn)
-            </label>
-            <input
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="VD: Muốn đề tập trung vào tác phẩm cụ thể, hoặc yêu cầu đặc biệt..."
-              className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-            />
+          {/* Ghi chú thêm & Upload ngữ liệu */}
+          <div className="w-full space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <BookOpen className="w-4 h-4" /> Ghi chú thêm / Ngữ liệu cụ thể
+              </label>
+              <button 
+                  type="button" 
+                  onClick={() => topicFileInputRef.current?.click()}
+                  className="text-xs flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-100 transition border border-indigo-200 font-medium"
+                >
+                   <Paperclip className="w-3 h-3" /> {topicFileName ? 'Đổi ngữ liệu' : 'Tải ngữ liệu (PDF/Doc)'}
+              </button>
+              <input 
+                  type="file" 
+                  ref={topicFileInputRef} 
+                  className="hidden" 
+                  accept=".pdf,.doc,.docx,.txt" 
+                  onChange={handleTopicFileUpload}
+              />
+            </div>
+            <div className="relative">
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder={topicFileName ? `Đã chọn file: ${topicFileName}. Nhập thêm ghi chú nếu cần...` : "VD: Muốn đề tập trung vào tác phẩm cụ thể, hoặc yêu cầu đặc biệt..."}
+                className={`w-full px-4 py-2 rounded-lg border focus:ring-2 outline-none transition ${topicFileName ? 'border-indigo-300 bg-indigo-50 focus:ring-indigo-500' : 'border-slate-300 focus:ring-blue-500'}`}
+              />
+              {topicFileName && (
+                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-xs text-indigo-600 bg-white px-2 py-1 rounded border border-indigo-100 shadow-sm">
+                    <FileText className="w-3 h-3" /> {topicFileName}
+                 </div>
+              )}
+            </div>
+            {topicFileName && (
+              <p className="text-xs text-indigo-600 italic">
+                * Hệ thống sẽ ưu tiên sử dụng nội dung từ file <strong>{topicFileName}</strong> làm ngữ liệu ra đề.
+              </p>
+            )}
           </div>
 
           <div className="border-t border-slate-200 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
