@@ -1,14 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ExamConfig, ExamData } from "../types";
 
-// function to get API key with priority: localStorage > env
-const getApiKey = (): string => {
-  const localKey = localStorage.getItem("GEMINI_API_KEY");
-  if (localKey) return localKey;
-  
-  // Support both process.env and import.meta.env for flexibility
-  return process.env.API_KEY || (import.meta as any).env?.VITE_API_KEY || "";
-};
+// Removed global initialization to support dynamic API keys
+// constant removed: const ai = ...
 
 // KNOWLEDGE BASE CONTENT (INTEGRATED)
 const KB_PRIMARY = `
@@ -38,19 +32,43 @@ const KB_HIGH = `
 - Văn bản trọng tâm: Tây Tiến, Việt Bắc, Đất Nước, Sóng, Người lái đò Sông Đà, Vợ nhặt, Vợ chồng A Phủ, Hồn Trương Ba da hàng thịt.
 `;
 
-export const generateExam = async (config: ExamConfig): Promise<ExamData> => {
-  const apiKey = getApiKey();
-  if (!apiKey) {
+export const generateExam = async (config: ExamConfig, apiKey?: string): Promise<ExamData> => {
+  // 1. Resolve API Key
+  const key = apiKey || localStorage.getItem("GEMINI_API_KEY") || process.env.API_KEY;
+
+  if (!key) {
     throw new Error("MISSING_API_KEY");
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  // 2. Initialize Client
+  const ai = new GoogleGenAI({ apiKey: key });
   const modelId = "gemini-2.5-flash"; 
   
   // Determine which KB to use based on level
   let selectedKB = KB_MIDDLE;
   if (config.level === 'Tiểu học') selectedKB = KB_PRIMARY;
   if (config.level === 'THPT') selectedKB = KB_HIGH;
+
+  // Xây dựng hướng dẫn chọn ngữ liệu
+  let sourceInstruction = "";
+  if (config.uploadedTopicContent) {
+    sourceInstruction = `
+    ĐẶC BIỆT CHÚ Ý: Người dùng ĐÃ TẢI LÊN NGỮ LIỆU CỤ THỂ.
+    Nội dung ngữ liệu: ${config.uploadedTopicContent}
+    
+    YÊU CẦU QUAN TRỌNG: 
+    1. BẠN PHẢI SỬ DỤNG ngữ liệu được cung cấp ở trên để ra đề phần ĐỌC HIỂU (hoặc Nghị luận văn học nếu phù hợp).
+    2. Nếu ngữ liệu quá dài, hãy trích dẫn đoạn tiêu biểu nhất.
+    3. Nếu ngữ liệu là file PDF (chỉ có tên file), hãy cố gắng tìm nội dung tương ứng trong kiến thức của bạn hoặc giả lập một đoạn trích phù hợp với tên tác phẩm đó.
+    `;
+  } else {
+    sourceInstruction = `
+    1. Chọn ngữ liệu:
+       - Nếu là "Tiểu học": Chọn truyện cổ tích, thơ thiếu nhi vui tươi, giáo dục.
+       - Nếu là "THCS/THPT": Chọn ngữ liệu có giá trị văn học, ưu tiên các tác phẩm trong danh sách trọng tâm HOẶC văn bản mới (nếu Trending Topic yêu cầu).
+       - Nếu Trending Topic là "Môi trường", "AI", "Gen Z"... hãy chọn ngữ liệu đọc hiểu liên quan.
+    `;
+  }
 
   const prompt = `
 Role: Bạn là chuyên gia soạn thảo đề thi Ngữ văn (${config.level}) hàng đầu, am hiểu chương trình GDPT 2018.
@@ -60,18 +78,15 @@ INPUT DỮ LIỆU:
 - Khối lớp: ${config.gradeLevel}
 - Thời gian: ${config.examType}
 - Chủ đề/Xu hướng: ${config.trendingTopic}
-- Yêu cầu thêm: ${config.topic || "Không có"}
+- Ghi chú thêm: ${config.topic || "Không có"}
 - Ma trận (User): ${config.matrixContent || "Sử dụng ma trận chuẩn bên dưới"}
 - Đặc tả (User): ${config.specificationContent || "Sử dụng đặc tả chuẩn bên dưới"}
 
 KNOWLEDGE BASE (CẤU TRÚC CHUẨN - BẮT BUỘC TUÂN THỦ):
 ${selectedKB}
 
-HƯỚNG DẪN CHI TIẾT:
-1. Chọn ngữ liệu:
-   - Nếu là "Tiểu học": Chọn truyện cổ tích, thơ thiếu nhi vui tươi, giáo dục.
-   - Nếu là "THCS/THPT": Chọn ngữ liệu có giá trị văn học, ưu tiên các tác phẩm trong danh sách trọng tâm HOẶC văn bản mới (nếu Trending Topic yêu cầu).
-   - Nếu Trending Topic là "Môi trường", "AI", "Gen Z"... hãy chọn ngữ liệu đọc hiểu liên quan.
+HƯỚNG DẪN CHI TIẾT VỀ NGỮ LIỆU VÀ CÂU HỎI:
+${sourceInstruction}
 
 2. Soạn câu hỏi:
    - Đảm bảo tỷ lệ câu hỏi Nhận biết/Thông hiểu/Vận dụng phù hợp với cấp học.
@@ -156,20 +171,27 @@ Output Format: JSON only.
     return JSON.parse(response.text) as ExamData;
 
   } catch (error: any) {
-    console.error("Gemini API Error:", error);
-
-    // Handle specific error codes
-    if (error.status === 429 || error.message?.includes('429')) {
-      throw new Error(`Lỗi 429: Quota exceeded. Hệ thống đang quá tải hoặc bạn đã hết hạn ngạch miễn phí. Vui lòng thử lại sau.`);
-    }
-    if (error.status === 403 || error.message?.includes('403')) {
-      throw new Error(`Lỗi 403: API Key không hợp lệ hoặc không có quyền truy cập.`);
-    }
-    if (error.status === 400 || error.message?.includes('400')) {
-      throw new Error(`Lỗi 400: Yêu cầu không hợp lệ. Vui lòng kiểm tra lại dữ liệu đầu vào.`);
-    }
+    console.error("Gemini API Error", error);
     
-    // Throw original message if it's a known API error string, otherwise generic
-    throw new Error(error.message || "Đã xảy ra lỗi khi kết nối với AI.");
+    // Detailed Error Handling as requested
+    if (error.status === 429 || (error.message && error.message.includes('429'))) {
+       throw new Error("Lỗi 429: Quá giới hạn request (Quota exceeded). Vui lòng thử lại sau hoặc đổi API Key khác.");
+    }
+    if (error.status === 403 || (error.message && error.message.includes('403'))) {
+       throw new Error("Lỗi 403: Quyền truy cập bị từ chối hoặc API Key không hợp lệ.");
+    }
+    if (error.status === 400 || (error.message && error.message.includes('400'))) {
+       throw new Error("Lỗi 400: Yêu cầu không hợp lệ (Bad Request). Kiểm tra lại dữ liệu đầu vào.");
+    }
+    if (error.status === 401 || (error.message && error.message.includes('401'))) {
+       throw new Error("Lỗi 401: API Key không đúng hoặc hết hạn. Vui lòng kiểm tra lại cấu hình.");
+    }
+
+    // JSON Parse Error or other
+    if (error instanceof SyntaxError) {
+        throw new Error("Lỗi định dạng dữ liệu từ AI (JSON Parse Error).");
+    }
+
+    throw error; // Re-throw generic error
   }
 };
