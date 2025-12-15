@@ -37,11 +37,11 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
   const [examType, setExamType] = useState(DATA[LEVELS.MIDDLE].times[1]);
   const [topic, setTopic] = useState('');
   const [trendingTopic, setTrendingTopic] = useState(DATA[LEVELS.MIDDLE].trends[0]);
-  
+
   const [matrixContent, setMatrixContent] = useState('');
   const [specificationContent, setSpecificationContent] = useState('');
   const [uploadedTopicContent, setUploadedTopicContent] = useState(''); // Content from uploaded topic file
-  
+
   const [specFileName, setSpecFileName] = useState<string | null>(null);
   const [matrixFileName, setMatrixFileName] = useState<string | null>(null);
   const [topicFileName, setTopicFileName] = useState<string | null>(null);
@@ -60,13 +60,13 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ 
-      level, 
-      gradeLevel, 
-      examType, 
-      topic, 
-      trendingTopic, 
-      matrixContent, 
+    onSubmit({
+      level,
+      gradeLevel,
+      examType,
+      topic,
+      trendingTopic,
+      matrixContent,
       specificationContent,
       uploadedTopicContent // Pass the uploaded content
     });
@@ -95,14 +95,14 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
       // Logic giả lập đọc file để đưa vào ngữ cảnh AI
       // Trong thực tế cần server-side parsing hoặc thư viện js pdf
       if (file.type === "application/pdf") {
-         setUploadedTopicContent(`[NGỮ LIỆU ĐƯỢC CUNG CẤP TỪ FILE PDF: ${file.name}]. Hãy coi đây là văn bản chính để ra đề.`);
+        setUploadedTopicContent(`[NGỮ LIỆU ĐƯỢC CUNG CẤP TỪ FILE PDF: ${file.name}]. Hãy coi đây là văn bản chính để ra đề.`);
       } else {
-         const reader = new FileReader();
-         reader.onload = (e) => {
-            const text = e.target?.result as string;
-            setUploadedTopicContent(`[NGỮ LIỆU TỪ FILE USER UPLOAD]:\n${text}`);
-         };
-         reader.readAsText(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const text = e.target?.result as string;
+          setUploadedTopicContent(`[NGỮ LIỆU TỪ FILE USER UPLOAD]:\n${text}`);
+        };
+        reader.readAsText(file);
       }
     }
   };
@@ -115,11 +115,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             <Sparkles className="w-8 h-8 text-blue-600" />
           </div>
         </div>
-        </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN PRO<span className="text-blue-600">PRO</span></h1>
-        <p className="text-slate-600 font-medium">Phát triển bởi Trần Hoài Thanh</p>
-        <p className="text-slate-500 text-sm mt-1">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN PRO</h1>
+        <p className="text-slate-600">Phát triển bởi Trần Hoài Thanh</p>
       </div>
+
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
         {/* Level Selection Tabs */}
         <div className="flex border-b border-gray-200">
@@ -128,11 +127,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
               key={lvl}
               type="button"
               onClick={() => !isGenerating && setLevel(lvl)}
-              className={`flex-1 py-4 text-sm font-bold uppercase tracking-wide transition-colors ${
-                level === lvl
+              className={`flex-1 py-4 text-sm font-bold uppercase tracking-wide transition-colors ${level === lvl
                   ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-600'
                   : 'text-slate-500 hover:text-slate-700 hover:bg-gray-50'
-              } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {lvl}
             </button>
@@ -169,38 +167,38 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             </div>
 
             <div className="lg:col-span-2">
-               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
-                  <Flame className="w-4 h-4 text-orange-500" /> {level === LEVELS.PRIMARY ? 'Chủ đề bài học' : 'Xu hướng / Chủ đề nóng'}
-               </label>
-               <select
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <Flame className="w-4 h-4 text-orange-500" /> {level === LEVELS.PRIMARY ? 'Chủ đề bài học' : 'Xu hướng / Chủ đề nóng'}
+              </label>
+              <select
                 value={trendingTopic}
                 onChange={(e) => setTrendingTopic(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border border-orange-200 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition bg-orange-50 text-orange-900 font-medium"
-               >
-                 {DATA[level].trends.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-               </select>
+              >
+                {DATA[level].trends.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
             </div>
           </div>
-          
+
           {/* Ghi chú thêm & Upload ngữ liệu */}
           <div className="w-full space-y-2">
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                 <BookOpen className="w-4 h-4" /> Ghi chú thêm / Ngữ liệu cụ thể
               </label>
-              <button 
-                  type="button" 
-                  onClick={() => topicFileInputRef.current?.click()}
-                  className="text-xs flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-100 transition border border-indigo-200 font-medium"
-                >
-                   <Paperclip className="w-3 h-3" /> {topicFileName ? 'Đổi ngữ liệu' : 'Tải ngữ liệu (PDF/Doc)'}
+              <button
+                type="button"
+                onClick={() => topicFileInputRef.current?.click()}
+                className="text-xs flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded hover:bg-indigo-100 transition border border-indigo-200 font-medium"
+              >
+                <Paperclip className="w-3 h-3" /> {topicFileName ? 'Đổi ngữ liệu' : 'Tải ngữ liệu (PDF/Doc)'}
               </button>
-              <input 
-                  type="file" 
-                  ref={topicFileInputRef} 
-                  className="hidden" 
-                  accept=".pdf,.doc,.docx,.txt" 
-                  onChange={handleTopicFileUpload}
+              <input
+                type="file"
+                ref={topicFileInputRef}
+                className="hidden"
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={handleTopicFileUpload}
               />
             </div>
             <div className="relative">
@@ -212,9 +210,9 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
                 className={`w-full px-4 py-2 rounded-lg border focus:ring-2 outline-none transition ${topicFileName ? 'border-indigo-300 bg-indigo-50 focus:ring-indigo-500' : 'border-slate-300 focus:ring-blue-500'}`}
               />
               {topicFileName && (
-                 <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-xs text-indigo-600 bg-white px-2 py-1 rounded border border-indigo-100 shadow-sm">
-                    <FileText className="w-3 h-3" /> {topicFileName}
-                 </div>
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1 text-xs text-indigo-600 bg-white px-2 py-1 rounded border border-indigo-100 shadow-sm">
+                  <FileText className="w-3 h-3" /> {topicFileName}
+                </div>
               )}
             </div>
             {topicFileName && (
@@ -227,67 +225,67 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
           <div className="border-t border-slate-200 pt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Cột 1: Ma trận */}
             <div className="space-y-3">
-               <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                     <FileText className="w-4 h-4 text-blue-600" /> 1. Nội dung Ma trận
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => matrixFileInputRef.current?.click()}
-                    className="text-xs flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded hover:bg-blue-100 transition border border-blue-200 font-medium"
-                  >
-                     <Upload className="w-3 h-3" /> {matrixFileName ? 'Đổi file' : 'Tải lên PDF'}
-                  </button>
-                  <input 
-                    type="file" 
-                    ref={matrixFileInputRef} 
-                    className="hidden" 
-                    accept=".pdf,.doc,.docx,.txt" 
-                    onChange={handleMatrixFileUpload}
-                  />
-               </div>
-               <div className="relative">
-                  <textarea
-                    value={matrixContent}
-                    onChange={(e) => setMatrixContent(e.target.value)}
-                    rows={8}
-                    placeholder={`Dán nội dung ma trận vào đây nếu có.\nNếu để trống, AI sẽ sử dụng Ma trận chuẩn của Bộ GD&ĐT cho cấp ${level}.`}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none text-sm font-mono bg-slate-50"
-                  />
-               </div>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <FileText className="w-4 h-4 text-blue-600" /> 1. Nội dung Ma trận
+                </label>
+                <button
+                  type="button"
+                  onClick={() => matrixFileInputRef.current?.click()}
+                  className="text-xs flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded hover:bg-blue-100 transition border border-blue-200 font-medium"
+                >
+                  <Upload className="w-3 h-3" /> {matrixFileName ? 'Đổi file' : 'Tải lên PDF'}
+                </button>
+                <input
+                  type="file"
+                  ref={matrixFileInputRef}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={handleMatrixFileUpload}
+                />
+              </div>
+              <div className="relative">
+                <textarea
+                  value={matrixContent}
+                  onChange={(e) => setMatrixContent(e.target.value)}
+                  rows={8}
+                  placeholder={`Dán nội dung ma trận vào đây nếu có.\nNếu để trống, AI sẽ sử dụng Ma trận chuẩn của Bộ GD&ĐT cho cấp ${level}.`}
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none text-sm font-mono bg-slate-50"
+                />
+              </div>
             </div>
 
             {/* Cột 2: Đặc tả */}
             <div className="space-y-3">
-               <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                     <FileUp className="w-4 h-4 text-orange-600" /> 2. Bảng đặc tả kỹ thuật
-                  </label>
-                  <button 
-                    type="button" 
-                    onClick={() => specFileInputRef.current?.click()}
-                    className="text-xs flex items-center gap-1 bg-orange-50 text-orange-700 px-3 py-1 rounded hover:bg-orange-100 transition border border-orange-200 font-medium"
-                  >
-                     <Upload className="w-3 h-3" /> {specFileName ? 'Đổi file' : 'Tải lên PDF'}
-                  </button>
-                  <input 
-                    type="file" 
-                    ref={specFileInputRef} 
-                    className="hidden" 
-                    accept=".pdf,.doc,.docx,.txt" 
-                    onChange={handleSpecFileUpload}
-                  />
-               </div>
-               
-               <div className="relative">
-                  <textarea
-                    value={specificationContent}
-                    onChange={(e) => setSpecificationContent(e.target.value)}
-                    rows={8}
-                    placeholder={`Dán bảng đặc tả vào đây.\nAI sẽ phân tích để ra câu hỏi đúng mức độ nhận thức (NB/TH/VD/VDC).`}
-                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition resize-none text-sm font-mono bg-slate-50"
-                  />
-               </div>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <FileUp className="w-4 h-4 text-orange-600" /> 2. Bảng đặc tả kỹ thuật
+                </label>
+                <button
+                  type="button"
+                  onClick={() => specFileInputRef.current?.click()}
+                  className="text-xs flex items-center gap-1 bg-orange-50 text-orange-700 px-3 py-1 rounded hover:bg-orange-100 transition border border-orange-200 font-medium"
+                >
+                  <Upload className="w-3 h-3" /> {specFileName ? 'Đổi file' : 'Tải lên PDF'}
+                </button>
+                <input
+                  type="file"
+                  ref={specFileInputRef}
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.txt"
+                  onChange={handleSpecFileUpload}
+                />
+              </div>
+
+              <div className="relative">
+                <textarea
+                  value={specificationContent}
+                  onChange={(e) => setSpecificationContent(e.target.value)}
+                  rows={8}
+                  placeholder={`Dán bảng đặc tả vào đây.\nAI sẽ phân tích để ra câu hỏi đúng mức độ nhận thức (NB/TH/VD/VDC).`}
+                  className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition resize-none text-sm font-mono bg-slate-50"
+                />
+              </div>
             </div>
           </div>
 
@@ -295,11 +293,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             <button
               type="submit"
               disabled={isGenerating}
-              className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all transform hover:-translate-y-1 ${
-                isGenerating
+              className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all transform hover:-translate-y-1 ${isGenerating
                   ? 'bg-slate-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/30'
-              }`}
+                }`}
             >
               {isGenerating ? (
                 <span className="flex items-center justify-center gap-2">
