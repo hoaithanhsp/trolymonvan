@@ -115,8 +115,10 @@ const ExamForm: React.FC<ExamFormProps> = ({ onSubmit, isGenerating }) => {
             <Sparkles className="w-8 h-8 text-blue-600" />
           </div>
         </div>
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">Trợ Lý Soạn Đề Ngữ Văn AI <span className="text-blue-600">Ver 3.0</span></h1>
-        <p className="text-slate-600">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
+        </div>
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">TRỢ LÝ MÔN VĂN <span className="text-blue-600">PRO</span></h1>
+        <p className="text-slate-600 font-medium">Phát triển bởi Trần Hoài Thanh</p>
+        <p className="text-slate-500 text-sm mt-1">Hỗ trợ toàn diện Tiểu học, THCS & THPT - Chuẩn ma trận GDPT 2018</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden">
