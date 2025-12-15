@@ -6,6 +6,7 @@ export interface ExamConfig {
   trendingTopic: string;
   matrixContent: string;
   specificationContent: string;
+  uploadedTopicContent?: string; // New field for uploaded context/material
 }
 
 export interface QuestionPart {
