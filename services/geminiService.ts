@@ -42,7 +42,7 @@ export const generateExam = async (config: ExamConfig, apiKey?: string): Promise
 
   // 2. Initialize Client
   const ai = new GoogleGenAI({ apiKey: key });
-  const modelId = "gemini-2.5-flash"; 
+  const modelId = "gemini-3-pro-preview"; 
   
   // Determine which KB to use based on level
   let selectedKB = KB_MIDDLE;
